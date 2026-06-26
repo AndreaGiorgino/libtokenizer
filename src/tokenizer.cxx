@@ -103,11 +103,7 @@ namespace libtokenizer {
     }
 
     auto tokenizer::get(void) -> token {
-        if (_parser->eof())
-            return token {
-                -1, std::string { (char)EOF }, token_t::END_OF_FILE
-            };
-        else if (_parser->tellg() == _bufferedToken.position - 1)
+        if (_parser->tellg() == _bufferedToken.position - 1)
             return _bufferedToken;
 
         const auto& pToken { _parser->get() };
@@ -150,6 +146,12 @@ namespace libtokenizer {
         } else if (pToken.literal.size() == 1) {
             // handle symbols
             const auto& ch { pToken.literal[0] };
+
+            // check for EOF
+            if (ch == EOF) {
+                _bufferedToken.type = tokenizer::token_t::END_OF_FILE;
+                return _bufferedToken;
+            }
 
             // check for known symbols
             if (const auto it { token_t_map.find(ch) };
