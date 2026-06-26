@@ -16,7 +16,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Options.cmake)
 FetchContent_Declare(
     parser
     GIT_REPOSITORY git@github.com:AndreaGiorgino/libparser.git
-    GIT_TAG 2.1.1
+    GIT_TAG 2.1.2
     GIT_SHALLOW TRUE
 )
 

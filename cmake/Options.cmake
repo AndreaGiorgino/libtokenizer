@@ -3,7 +3,7 @@ option(TOKENIZER_BUILD_TESTING "Enable testing and build tests." OFF)
 
 if(DEBUG)
     add_compile_definitions(DEBUG)
-    add_compile_options(-g -ggdb)
+    add_compile_options(-g -ggdb -O0)
 endif()
 
 if(TOKENIZER_BUILD_TESTING)
