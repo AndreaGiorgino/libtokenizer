@@ -157,7 +157,13 @@ namespace libtokenizer {
             return _bufferedToken;
         }
 
-        // undefined pToken
+        // check for alphanumeric token
+        for (const char ch : _bufferedToken.literal)
+            if (!std::isdigit(ch))
+                return _bufferedToken;
+
+        // numeric token
+        _bufferedToken.type = token_t::NUMERIC;
         return _bufferedToken;
     }
 
