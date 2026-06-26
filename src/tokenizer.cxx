@@ -1,7 +1,6 @@
 #include <format>
 #include <unordered_map>
 
-#include "errors/file_error.hxx"
 #include "errors/tokenizer_error.hxx"
 #include "libparser/errors/file_error.hxx"
 #include "tokenizer.hxx"
@@ -90,14 +89,14 @@ namespace libtokenizer {
 
     tokenizer::tokenizer(std::string_view sourceFilePath) {
         if (sourceFilePath.empty())
-            throw libtokenizer::errors::file_error("Cannot use an empty path");
+            throw libparser::errors::file_error("Cannot use an empty path");
 
         _sourceFilePath = fs::absolute(sourceFilePath);
 
         try {
             _parser = std::make_unique<libparser::parser>(sourceFilePath);
         } catch (const libparser::errors::file_error& err) {
-            throw libtokenizer::errors::file_error(err.what());
+            throw err;
         } catch (const std::exception& err) {
             throw libtokenizer::errors::tokenizer_error(err.what());
         }
