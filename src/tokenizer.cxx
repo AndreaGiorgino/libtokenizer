@@ -42,7 +42,55 @@ namespace libtokenizer {
         { '_',  tokenizer::token_t::UNDERSCORE },
     }};
 
+    auto tokenizer::get_token_t_name(tokenizer::token_t type) -> std::string {
+        switch (type) {
+            case tokenizer::token_t::END_OF_FILE:          return "END_OF_FILE";
+            case tokenizer::token_t::NEWLINE:              return "NEWLINE";
+            case tokenizer::token_t::SPACE:                return "SPACE";
+            case tokenizer::token_t::AMP:                  return "AMP";
+            case tokenizer::token_t::AT:                   return "AT";
+            case tokenizer::token_t::BACKSLASH:            return "BACKSLASH";
+            case tokenizer::token_t::BANG:                 return "BANG";
+            case tokenizer::token_t::BAR:                  return "BAR";
+            case tokenizer::token_t::CLOSE_BRACKET:        return "CLOSE_BRACKET";
+            case tokenizer::token_t::CLOSE_PAREN:          return "CLOSE_PAREN";
+            case tokenizer::token_t::CLOSE_SQUARE:         return "CLOSE_SQUARE";
+            case tokenizer::token_t::COLON:                return "COLON";
+            case tokenizer::token_t::COMMA:                return "COMMA";
+            case tokenizer::token_t::DASH:                 return "DASH";
+            case tokenizer::token_t::DOT:                  return "DOT";
+            case tokenizer::token_t::DOUBLE_QUOTE:         return "DOUBLE_QUOTE";
+            case tokenizer::token_t::EQUALS:               return "EQUALS";
+            case tokenizer::token_t::GREATHER:             return "GREATHER";
+            case tokenizer::token_t::HASH:                 return "HASH";
+            case tokenizer::token_t::LESS:                 return "LESS";
+            case tokenizer::token_t::OPEN_BRACKET:         return "OPEN_BRACKET";
+            case tokenizer::token_t::OPEN_PAREN:           return "OPEN_PAREN";
+            case tokenizer::token_t::OPEN_SQUARE:          return "OPEN_SQUARE";
+            case tokenizer::token_t::PERC:                 return "PERC";
+            case tokenizer::token_t::PLUS:                 return "PLUS";
+            case tokenizer::token_t::QUESTION:             return "QUESTION";
+            case tokenizer::token_t::QUOTE:                return "QUOTE";
+            case tokenizer::token_t::SEMICOLON:            return "SEMICOLON";
+            case tokenizer::token_t::SLASH:                return "SLASH";
+            case tokenizer::token_t::STAR:                 return "STAR";
+            case tokenizer::token_t::UNDERSCORE:           return "UNDERSCORE";
+            case tokenizer::token_t::ALPHANUMERIC:         return "ALPHANUMERIC";
+            case tokenizer::token_t::NUMERIC:              return "NUMERIC";
+            case tokenizer::token_t::STRING_DOUBLE_QUOTED: return "STRING_DOUBLE_QUOTED";
+            case tokenizer::token_t::STRING_QUOTED:        return "STRING_QUOTED";
+            default:
+               throw libtokenizer::errors::tokenizer_error(
+                       std::format(
+                           "Token type name not defined: {}",
+                           std::to_underlying(type)));
+        };
+    }
+
     tokenizer::tokenizer(std::string_view sourceFilePath) {
+        if (sourceFilePath.empty())
+            throw libtokenizer::errors::file_error("Cannot use an empty path");
+
         _sourceFilePath = fs::absolute(sourceFilePath);
 
         try {
@@ -67,7 +115,7 @@ namespace libtokenizer {
         _bufferedToken = {
             pToken.position,
             pToken.literal,
-            token_t::UNDEFINED
+            token_t::ALPHANUMERIC,
         };
 
         if (pToken.literal == "'"

@@ -23,8 +23,6 @@ namespace libtokenizer {
              * @brief Enumerates the token types
              */
             enum class token_t {
-                UNDEFINED,
-
                 // syntax
                 END_OF_FILE,
                 NEWLINE,
@@ -62,7 +60,7 @@ namespace libtokenizer {
 
                 // other
                 ALPHANUMERIC,
-                NUMBER,
+                NUMERIC,
                 STRING_DOUBLE_QUOTED,
                 STRING_QUOTED,
             };
@@ -90,6 +88,14 @@ namespace libtokenizer {
             ~tokenizer(void) = default;
 
         public: // methods
+            /**
+             * @brief Get the token type name
+             *
+             * @param type The token type to get the name of
+             */
+            [[nodiscard]]
+                static auto get_token_t_name(token_t type) -> std::string;
+
             /**
              * @brief Get the next token
              */
