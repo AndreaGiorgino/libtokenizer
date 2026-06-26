@@ -8,6 +8,7 @@ set(
     TestOpenFileErrorEmptyString.cxx
     TestOpenFileErrorFileNotFound.cxx
     TestOpenFileErrorFileNotRegular.cxx
+    TestParseFileGenerator.cxx
 )
 
 create_test_sourcelist(
