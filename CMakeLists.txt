@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.24)
 
 project(
     tokenizer
@@ -16,7 +16,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Options.cmake)
 FetchContent_Declare(
     parser
     GIT_REPOSITORY git@github.com:AndreaGiorgino/libparser.git
-    GIT_TAG 2.0
+    GIT_TAG 2.1.1
     GIT_SHALLOW TRUE
 )
 
@@ -25,6 +25,9 @@ FetchContent_MakeAvailable(parser)
 #
 # Target
 #
+
+set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 file(
     GLOB_RECURSE SOURCE_FILES
@@ -51,17 +54,15 @@ target_compile_options(
 
 target_include_directories(
     ${PROJECT_NAME}
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
-
-target_include_directories(
-    ${PROJECT_NAME}
-    PRIVATE $<TARGET_FILE_DIR:parser>/include
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:$<TARGET_FILE_DIR:${PROJECT_NAME}>/include>
+        $<INSTALL_INTERFACE:include>
 )
 
 target_link_libraries(
     ${PROJECT_NAME}
-    PRIVATE parser
+    PUBLIC parser
 )
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/PostBuild.cmake)
