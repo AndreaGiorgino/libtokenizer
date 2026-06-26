@@ -163,13 +163,33 @@ namespace libtokenizer {
             return _bufferedToken;
         }
 
-        // check for alphanumeric token
+        // check for numeric token
+        bool testFlag { true };
         for (const char ch : _bufferedToken.literal)
-            if (!std::isdigit(ch))
-                return _bufferedToken;
+            if (!std::isdigit(ch)) {
+                testFlag = false;
+                break;
+            }
 
-        // numeric token
-        _bufferedToken.type = token_t::NUMERIC;
+        if (testFlag) {
+            _bufferedToken.type = token_t::NUMERIC;
+            return _bufferedToken;
+        }
+
+        // test for space token
+        testFlag = true;
+        for (const char ch : _bufferedToken.literal)
+            if (!std::isspace(ch)) {
+                testFlag = false;
+                break;
+            }
+
+        if (testFlag) {
+            _bufferedToken.type = token_t::SPACE;
+            return _bufferedToken;
+        }
+
+        // alphanumeric token
         return _bufferedToken;
     }
 
