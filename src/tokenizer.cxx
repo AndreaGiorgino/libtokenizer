@@ -122,10 +122,10 @@ namespace libtokenizer {
                 || pToken.literal == "\"") {
             // handle quoted strings
             const auto quotationMark { pToken.literal };
-            for (const auto next { _parser->peek() };
-                    !_parser->eof();
-                    _parser->ignore()) {
-                // add part to the literal
+
+            libparser::parser::token next {};
+            while (!_parser->eof()) {
+                next = _parser->get();
                 _bufferedToken.literal += next.literal;
 
                 // check for newline
@@ -134,12 +134,14 @@ namespace libtokenizer {
                             std::format(
                                 "Unclosed quoted string at position {}: {:?}.",
                                 _bufferedToken.position, _bufferedToken.literal));
-                else if (next.literal == quotationMark)
+
+                // checkfor quotation end
+                if (next.literal == quotationMark)
                     break;
             }
 
             // check for eof
-            if (*_bufferedToken.literal.end() != quotationMark[0])
+            if (*(_bufferedToken.literal.end() - 1) != quotationMark[0])
                 throw errors::tokenizer_error(
                         std::format(
                             "Unclosed quoted string at position {}: {:?}.",
