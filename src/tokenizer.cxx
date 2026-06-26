@@ -77,6 +77,7 @@ namespace libtokenizer {
             case tokenizer::token_t::UNDERSCORE:           return "UNDERSCORE";
             case tokenizer::token_t::ALPHANUMERIC:         return "ALPHANUMERIC";
             case tokenizer::token_t::NUMERIC:              return "NUMERIC";
+            case tokenizer::token_t::SYMBOL:               return "SYMBOL";
             case tokenizer::token_t::STRING_DOUBLE_QUOTED: return "STRING_DOUBLE_QUOTED";
             case tokenizer::token_t::STRING_QUOTED:        return "STRING_QUOTED";
             default:
@@ -154,6 +155,8 @@ namespace libtokenizer {
                     it != token_t_map.end())
                 _bufferedToken.type = it->second;
 
+            // unknown symbol
+            _bufferedToken.type = tokenizer::token_t::SYMBOL;
             return _bufferedToken;
         }
 

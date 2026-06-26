@@ -61,6 +61,7 @@ namespace libtokenizer {
                 // other
                 ALPHANUMERIC,
                 NUMERIC,
+                SYMBOL,
                 STRING_DOUBLE_QUOTED,
                 STRING_QUOTED,
             };
