@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
+
 #
 # Target executables
 #
@@ -10,6 +11,8 @@ set(
     TestOpenFileErrorFileNotFound.cxx
     TestOpenFileErrorFileNotRegular.cxx
     TestParseFileGenerator.cxx
+    TestParseFileStreamEof.cxx
+    TestParseFileStreamGet.cxx
 )
 
 create_test_sourcelist(
