@@ -76,7 +76,8 @@ auto TestParseFileGenerator(int, char**) -> int {
                 || token.type != tokenResult.type) {
             std::println(std::cerr,
                     "-- Token not matching the expected result: "
-                    "\"{{ {}, {:?}, {} }}\" expected, got \"{{ {}, {:?}, {} }}\" instead.",
+                    "\"{{ {}, {:?}, {} }}\" expected, got "
+                    "\"{{ {}, {:?}, {} }}\" instead.",
                     tokenResult.position, tokenResult.literal,
                     libtokenizer::tokenizer::get_token_t_name(tokenResult.type),
                     token.position, token.literal,

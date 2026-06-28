@@ -12,39 +12,31 @@ static constexpr std::array<libtokenizer::tokenizer::token, 2> tokensResult {{
 auto TestParseFileStreamGet(int, char**) -> int {
     libtokenizer::tokenizer t { testFilePath };
 
-    size_t i {};
-    {
-        const auto token { t.get() };
-        if (const auto& tokenResult { tokensResult[i++] };
-                token.position != tokenResult.position
-                || token.literal != tokenResult.literal
-                || token.type != tokenResult.type) {
-            std::println(std::cerr,
-                    "-- Token not matching the expected result: "
-                    "\"{{ {}, {:?}, {} }}\" expected, got \"{{ {}, {:?}, {} }}\" instead.",
-                    tokenResult.position, tokenResult.literal,
-                    libtokenizer::tokenizer::get_token_t_name(token.type),
-                    token.position, token.literal,
-                    libtokenizer::tokenizer::get_token_t_name(tokenResult.type));
-            return 1;
+    const auto lambda {
+        [&](size_t resultIndex) -> int {
+            const auto token { t.get() };
+            if (const auto& tokenResult { tokensResult[resultIndex] };
+                    token.position != tokenResult.position
+                    || token.literal != tokenResult.literal
+                    || token.type != tokenResult.type) {
+                std::println(std::cerr,
+                        "-- Token not matching the expected result: "
+                        "\"{{ {}, {:?}, {} }}\" expected, got "
+                        "\"{{ {}, {:?}, {} }}\" instead.",
+                        tokenResult.position, tokenResult.literal,
+                        libtokenizer::tokenizer::get_token_t_name(tokenResult.type),
+                        token.position, token.literal,
+                        libtokenizer::tokenizer::get_token_t_name(token.type));
+                return 1;
+            }
+            return 0;
         }
-    }
-    {
-        const auto token { t.get() };
-        if (const auto& tokenResult { tokensResult[i++] };
-                token.position != tokenResult.position
-                || token.literal != tokenResult.literal
-                || token.type != tokenResult.type) {
-            std::println(std::cerr,
-                    "-- Token not matching the expected result: "
-                    "\"{{ {}, {:?}, {} }}\" expected, got \"{{ {}, {:?}, {} }}\" instead.",
-                    tokenResult.position, tokenResult.literal,
-                    libtokenizer::tokenizer::get_token_t_name(token.type),
-                    token.position, token.literal,
-                    libtokenizer::tokenizer::get_token_t_name(tokenResult.type));
-            return 1;
-        }
-    }
+    };
+
+    for (size_t i {}; i < tokensResult.size(); i++)
+        if (const auto ret { lambda(i) };
+                ret != 0)
+            return ret;
 
     return 0;
 }
