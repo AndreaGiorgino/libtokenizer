@@ -205,7 +205,7 @@ namespace libtokenizer {
     auto tokenizer::peek(void) -> token {
         (void)get();
 
-        _parser->seekg(_bufferedToken.position - 1);
+        _parser->seekg(_bufferedToken.position);
         return _bufferedToken;
     }
 
