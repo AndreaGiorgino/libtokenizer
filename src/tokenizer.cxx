@@ -116,6 +116,12 @@ namespace libtokenizer {
             token_t::ALPHANUMERIC,
         };
 
+        // check for newlines
+        if (_bufferedToken.literal == "\n") {
+            _bufferedToken.type = token_t::NEWLINE;
+            return _bufferedToken;
+        }
+
         if (pToken.literal == "'"
                 || pToken.literal == "\"") {
             // handle quoted strings
