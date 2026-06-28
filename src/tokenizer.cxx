@@ -122,11 +122,36 @@ namespace libtokenizer {
             return _bufferedToken;
         }
 
+        // check for numeric token
+        bool testFlag { true };
+        for (const char ch : _bufferedToken.literal)
+            if (!std::isdigit(ch)) {
+                testFlag = false;
+                break;
+            }
+
+        if (testFlag) {
+            _bufferedToken.type = token_t::NUMERIC;
+            return _bufferedToken;
+        }
+
+        // test for space token
+        testFlag = true;
+        for (const char ch : _bufferedToken.literal)
+            if (!std::isspace(ch)) {
+                testFlag = false;
+                break;
+            }
+
+        if (testFlag) {
+            _bufferedToken.type = token_t::SPACE;
+            return _bufferedToken;
+        }
+
+        // check quoted strings
         if (pToken.literal == "'"
                 || pToken.literal == "\"") {
-            // handle quoted strings
             const auto quotationMark { pToken.literal };
-
             libparser::parser::token next {};
             while (!_parser->eof()) {
                 next = _parser->get();
@@ -163,37 +188,13 @@ namespace libtokenizer {
 
             // check for known symbols
             if (const auto it { token_t_map.find(ch) };
-                    it != token_t_map.end())
+                    it != token_t_map.end()) {
                 _bufferedToken.type = it->second;
+                return _bufferedToken;
+            }
 
             // unknown symbol
             _bufferedToken.type = tokenizer::token_t::SYMBOL;
-            return _bufferedToken;
-        }
-
-        // check for numeric token
-        bool testFlag { true };
-        for (const char ch : _bufferedToken.literal)
-            if (!std::isdigit(ch)) {
-                testFlag = false;
-                break;
-            }
-
-        if (testFlag) {
-            _bufferedToken.type = token_t::NUMERIC;
-            return _bufferedToken;
-        }
-
-        // test for space token
-        testFlag = true;
-        for (const char ch : _bufferedToken.literal)
-            if (!std::isspace(ch)) {
-                testFlag = false;
-                break;
-            }
-
-        if (testFlag) {
-            _bufferedToken.type = token_t::SPACE;
             return _bufferedToken;
         }
 
