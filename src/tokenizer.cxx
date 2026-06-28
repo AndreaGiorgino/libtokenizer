@@ -103,8 +103,10 @@ namespace libtokenizer {
     }
 
     auto tokenizer::get(void) -> token {
-        if (_parser->tellg() == _bufferedToken.position - 1)
+        if (_parser->tellg() == _bufferedToken.position) {
+            _parser->seekg(_bufferedToken.literal.size());
             return _bufferedToken;
+        }
 
         const auto& pToken { _parser->get() };
 
