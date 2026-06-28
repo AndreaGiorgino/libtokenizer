@@ -13,6 +13,7 @@ set(
     TestParseFileGenerator.cxx
     TestParseFileStreamEof.cxx
     TestParseFileStreamGet.cxx
+    TestParseFileStreamIgnore.cxx
 )
 
 create_test_sourcelist(
