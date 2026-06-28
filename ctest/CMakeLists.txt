@@ -16,6 +16,7 @@ set(
     TestParseFileStreamIgnore.cxx
     TestParseFileStreamIgnoreMultiple.cxx
     TestParseFileStreamPeek.cxx
+    TestParseFileStreamSeek.cxx
 )
 
 create_test_sourcelist(
