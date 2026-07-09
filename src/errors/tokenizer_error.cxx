@@ -1,6 +1,6 @@
 #include <format>
 
-#include "errors/tokenizer_error.hxx"
+#include "libtokenizer/errors/tokenizer_error.hxx"
 
 namespace libtokenizer::errors {
     tokenizer_error::tokenizer_error(std::string_view errorMessage) noexcept {

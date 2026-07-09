@@ -1,10 +1,9 @@
-#include "tokenizer.hxx"
-
 #include <format>
 #include <unordered_map>
 
-#include "errors/tokenizer_error.hxx"
 #include "libparser/errors/file_error.hxx"
+#include "libtokenizer/errors/tokenizer_error.hxx"
+#include "libtokenizer/tokenizer.hxx"
 
 namespace fs = std::filesystem;
 
