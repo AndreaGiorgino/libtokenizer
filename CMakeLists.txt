@@ -63,3 +63,15 @@ target_link_libraries(
 )
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/PostBuild.cmake)
+
+if (TOKENIZER_BUILD_EXAMPLE)
+    include(ExternalProject)
+
+    ExternalProject_Add(
+        example
+        SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/example
+        BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/example/build
+        BUILD_ALWAYS ON
+        INSTALL_COMMAND ""
+    )
+endif()

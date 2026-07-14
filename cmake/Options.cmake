@@ -1,5 +1,6 @@
-option(DEBUG "Enable debug build." OFF)
-option(TOKENIZER_BUILD_TESTING "Enable testing and build tests." OFF)
+option(DEBUG "Enable the debug build." OFF)
+option(TOKENIZER_BUILD_TESTING "Enable testing and build the tests." OFF)
+option(TOKENIZER_BUILD_EXAMPLE "Build the example." OFF)
 
 if(DEBUG)
     add_compile_definitions(DEBUG)
