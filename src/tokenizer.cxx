@@ -1,9 +1,10 @@
+#include "libtokenizer/tokenizer.hxx"
+
 #include <format>
 #include <unordered_map>
 
 #include "libparser/errors/file_error.hxx"
 #include "libtokenizer/errors/tokenizer_error.hxx"
-#include "libtokenizer/tokenizer.hxx"
 
 namespace fs = std::filesystem;
 
@@ -239,8 +240,8 @@ auto tokenizer::peek(void) -> token {
     return _bufferedToken;
 }
 
-auto tokenizer::ignore(size_t count) -> void {
-    for (size_t i {}; i < count; i++) (void)get();
+auto tokenizer::ignore(size_t n) -> void {
+    for (size_t i {}; i < n; i++) (void)get();
 }
 
 auto tokenizer::tellg(void) -> std::streamoff {
