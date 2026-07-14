@@ -28,9 +28,9 @@ auto main(void) -> int {
             "Pos", posColWidth, "Type", typeColWidth);
         std::cout << separator << std::endl;
 
-        tokenizer p {filepath};
+        tokenizer t {filepath};
 
-        for (const auto& token : p.tokens())
+        for (const auto& token : t.tokens())
             std::println(" {: >{}} | {: <{}} | {:?}", token.position,
                 posColWidth, tokenizer::get_token_t_name(token.type),
                 typeColWidth, token.literal);
