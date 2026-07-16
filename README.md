@@ -1,6 +1,6 @@
 # libtokenizer
 
-Tokenizer library in cpp23
+Tokenizer library in Cpp23
 
 > [!IMPORTANT]
 > Since this library is still in development, it may not work correctly or some
@@ -25,7 +25,7 @@ cd libtokenizer
 
 ```bash
 cmake -B build \
-    -DTOKENIZER=ON \
+    -DTOKENIZER_BUILD_TESTING=ON \
     && cmake --build build --parallel $(($(nproc) - 1)) \
     && ctest --test-dir build 
 ```
@@ -35,8 +35,7 @@ cmake -B build \
 ```bash
 cmake -B build \
     -DTOKENIZER_BUILD_EXAMPLE=ON \
-    && cmake --build build --parallel $(($(nproc) - 1)) \
-    && ctest --test-dir build 
+    && cmake --build build --parallel $(($(nproc) - 1))
 
 cd example
 ./build/example
