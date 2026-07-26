@@ -126,7 +126,7 @@ tokenizer::tokenizer(std::string_view sourceFilePath) {
     if (sourceFilePath.empty())
         throw libparser::errors::file_error("Cannot use an empty path");
 
-    _sourceFilePath = fs::absolute(sourceFilePath);
+    _sourceFilePath = sourceFilePath;
 
     try {
         _parser = std::make_unique<libparser::parser>(sourceFilePath);
