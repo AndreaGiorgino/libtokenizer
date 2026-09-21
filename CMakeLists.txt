@@ -1,26 +1,21 @@
 cmake_minimum_required(VERSION 3.24)
 
 project(
-    tokenizer
+    libtokenizer
     VERSION 1.0.0
     LANGUAGES CXX
 )
+
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 #
 # Dependencies
 #
 
-include(FetchContent)
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Options.cmake)
-
-FetchContent_Declare(
-    parser
-    GIT_REPOSITORY git@github.com:AndreaGiorgino/libparser.git
-    GIT_TAG 2.1.2
-    GIT_SHALLOW TRUE
-)
-
-FetchContent_MakeAvailable(parser)
+include(${CMAKE_CURRENT_SOURCE_DIR}/CMake/Options.cmake)
 
 #
 # Target
@@ -55,23 +50,12 @@ target_include_directories(
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
         $<INSTALL_INTERFACE:include>
+    PRIVATE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 )
 
-target_link_libraries(
-    ${PROJECT_NAME}
-    PUBLIC parser
-)
+include(${CMAKE_CURRENT_SOURCE_DIR}/CMake/PostBuild.cmake)
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/PostBuild.cmake)
-
-if (TOKENIZER_BUILD_EXAMPLE)
-    include(ExternalProject)
-
-    ExternalProject_Add(
-        example
-        SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/example
-        BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/example/build
-        BUILD_ALWAYS ON
-        INSTALL_COMMAND ""
-    )
+if(LIBTOKENIZER_BUILD_EXAMPLE)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/example)
 endif()

@@ -1,6 +1,6 @@
 # libtokenizer
 
-Tokenizer library in Cpp23
+libtokenizer interface library in Cpp23
 
 > [!IMPORTANT]
 > Since this library is still in development, it may not work correctly or some
@@ -15,108 +15,50 @@ Tokenizer library in Cpp23
 ### Compilation
 
 ```bash
-git clone https://github.com/giorgi.page/libtokenizer.git
+git clone https://github.com/AndreaGiorgino/libtokenizer
 cd libtokenizer
 
 ./build.sh
 ```
 
-### Testing
+Build targets:
 
-```bash
-cmake -B build \
-    -DTOKENIZER_BUILD_TESTING=ON \
-    && cmake --build build --parallel $(($(nproc) - 1)) \
-    && ctest --test-dir build 
-```
+- `build`
+- `debug`
+- `test`
+- `example`
 
-### Example
-
-```bash
-cmake -B build \
-    -DTOKENIZER_BUILD_EXAMPLE=ON \
-    && cmake --build build --parallel $(($(nproc) - 1))
-
-cd example
-./build/example
-```
+> Run `./build.sh --help` for the build script usage
 
 ## Usage
 
-```cpp
-/*
- * main.cxx
- */
+Look at [example](example) for an example usage
 
-#include <iostream>
+## ABI quick reference
 
-#include "libparser/errors/file_error.hxx"
-#include "libtokenizer/tokenizer.hxx"
+### tokenizer
 
-using namespace libtokenizer;
+Capacity:
 
-auto main(void) -> int {
-    static constexpr auto filepath {"example.txt"};
+| Method name | Brief                       |
+| :---------- | :-------------------------- |
 
-    try {
-        tokenizer p {filepath};
-        for (const auto& token : p.tokens())
-            std::cout << "{"
-                      << "\n  .position = " << token.position
-                      << "\n  .literal  = " << std::quoted(token.literal)
-                      << "\n  .type     = "
-                      << tokenizer::get_token_t_name(token.type) << "\n}"
-                      << std::endl;
-    } catch (const libparser::errors::file_error& ex) {
-        std::cerr << "tokenizer file error: " << ex.what() << std::endl;
-    } catch (const std::exception& ex) {
-        std::cerr << "unhandled exception: " << ex.what() << std::endl;
-    }
+Lookup:
 
-    return 0;
-}
-```
+| Method name | Brief                  |
+| :---------- | :--------------------- |
 
-```cmake
-#
-# CMakeLists.txt
-#
+Modifiers:
 
-cmake_minimum_required(VERSION 3.24)
+| Method name  | Brief                                |
+| :----------- | :----------------------------------- |
 
-project(
-    example
-    LANGUAGES CXX
-)
+IO interface:
 
-#
-# Dependencies
-#
+| Method name | Brief                                      |
+| :---------- | :----------------------------------------- |
 
-include(FetchContent)
+### Exceptions
 
-FetchContent_Declare(
-    tokenizer
-    GIT_REPOSITORY git@github.com:AndreaGiorgino/libtokenizer
-    GIT_TAG 1.0.0
-)
-
-FetchContent_MakeAvailable(tokenizer)
-
-#
-# Target
-#
-
-set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
-
-add_executable(
-    ${PROJECT_NAME}
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cxx
-)
-
-target_link_libraries(
-    ${PROJECT_NAME}
-    PUBLIC tokenizer
-)
-```
+| Exception name | brief                       |
+| :------------- | :-------------------------- |
