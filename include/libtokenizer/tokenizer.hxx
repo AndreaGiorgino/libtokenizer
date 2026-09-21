@@ -1,33 +1,67 @@
-
 #pragma once
 #ifndef H_TOKENIZER
 #define H_TOKENIZER
 
-namespace libtokenizer {
-class tokenizer final {
+#include <istream>
+
+class Tokenizer final {
    public:
-    // ------------------------------------------------------------------------
-    // Ctors
-    // ------------------------------------------------------------------------
-    tokenizer(void) noexcept = default;
+    enum class TokenType {
+        NONE,
+        
+        END_OF_FILE,
+        NEWLINE,
+        SPACE,
 
-    // ------------------------------------------------------------------------
-    // Copy
-    // ------------------------------------------------------------------------
-    tokenizer(const tokenizer&) noexcept                     = default;
-    auto operator =(const tokenizer&) noexcept -> tokenizer& = default;
+        IDENTIFIER,
+        NUMERIC_INT,
+        NUMERIC_FLOAT,
 
-    // ------------------------------------------------------------------------
-    // Move
-    // ------------------------------------------------------------------------
-    tokenizer(tokenizer&&) noexcept                     = default;
-    auto operator =(tokenizer&&) noexcept -> tokenizer& = default;
+        STRING_SINGLE_QUOTE,
+        STRING_DOUBLE_QUOTE,
+        STRING_BACKTICK,
+    };
 
-    // ------------------------------------------------------------------------
-    // Dtor
-    // ------------------------------------------------------------------------
-    ~tokenizer(void) noexcept = default;
+    struct Token final {
+        std::streamoff offset {};
+        std::string literal {};
+        TokenType type {};
+    };
+
+   public:
+    // Ctors ///////////////////////////////////////////////////////////////////
+    Tokenizer(void) noexcept = delete;
+    Tokenizer(std::istream& is, bool collapseStrings = true);
+
+    // Copy ///////////////////////////////////////////////////////////////////
+    Tokenizer(const Tokenizer&) noexcept                     = delete;
+    auto operator =(const Tokenizer&) noexcept -> Tokenizer& = delete;
+
+    // Move ///////////////////////////////////////////////////////////////////
+    Tokenizer(Tokenizer&&) noexcept                     = delete;
+    auto operator =(Tokenizer&&) noexcept -> Tokenizer& = delete;
+
+    // Dtor ///////////////////////////////////////////////////////////////////
+    ~Tokenizer(void) noexcept = default;
+
+   public:
+    // Lookup /////////////////////////////////////////////////////////////////
+    // Modifiers //////////////////////////////////////////////////////////////
+    [[nodiscard]] auto get(void) -> Token;
+
+    [[nodiscard]] auto peek(void) -> Token;
+
+    [[nodiscard]] auto tellg(void) -> std::streamoff;
+
+    auto seekg(std::streamoff offset) -> void;
+
+    [[nodiscard]] auto eof(void) -> bool;
+
+   private:
+    std::istream& _is;
+    bool _collapseStrings {false};
+
+    Token _buffer {.type = TokenType::NONE};
 };
-} // namespace libtokenizer
 
 #endif
