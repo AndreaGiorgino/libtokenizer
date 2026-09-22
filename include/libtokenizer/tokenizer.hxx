@@ -29,10 +29,22 @@ class Tokenizer final {
         TokenType type {};
     };
 
+    enum Options {
+        ALLOW_DASH_IDENTIFIER       = 1 << 0,
+        ALLOW_UNDERSCORE_IDENTIFIER = 1 << 1,
+        ALLOW_UNDERSCORE_NUMERIC    = 1 << 2,
+        COLLAPSE_SPACES             = 1 << 3,
+        COLLAPSE_STRINGS            = 1 << 4,
+        IGNORE_SPACES               = 1 << 5,
+    };
+
    public:
     // Ctors ///////////////////////////////////////////////////////////////////
     Tokenizer(void) noexcept = delete;
-    Tokenizer(std::istream& is, bool collapseStrings = true);
+    Tokenizer(std::istream& is, uint8_t options = ALLOW_UNDERSCORE_IDENTIFIER
+                                                  | ALLOW_UNDERSCORE_NUMERIC
+                                                  | COLLAPSE_SPACES
+                                                  | COLLAPSE_STRINGS);
 
     // Copy ///////////////////////////////////////////////////////////////////
     Tokenizer(const Tokenizer&) noexcept                     = delete;
