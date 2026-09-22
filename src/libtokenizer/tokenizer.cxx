@@ -169,11 +169,64 @@ auto tryParseString(std::istream& is, uint8_t options) noexcept
         .type    = type,
     };
 }
+
+Tokenizer::Tokenizer(std::istream& is, uint8_t options)
     : _is(is),
-      _collapseStrings(collapseStrings) {
+      _options(options) {
     if (!is)
         throw std::runtime_error("invalid stream provided");
 }
+
+auto Tokenizer::get(void) -> Token {
+    if (_bufferedToken.type != TokenType::NONE
+        && _is.tellg() == _bufferedToken.offset)
+        return _bufferedToken;
+    else if (_is.eof())
+        return _bufferedToken = {
+                   .offset  = _is.tellg(),
+                   .literal = {},
+                   .type    = TokenType::END_OF_FILE,
+        };
+
+    const auto ch {_is.peek()};
+
+    if (std::isspace(ch)) {
+        if (_options & Options::IGNORE_SPACES) {
+            while (std::isspace(_is.peek()))
+                _is.ignore();
+            return get();
+        }
+
+        std::string buffer {};
+
+        if (_options & Options::COLLAPSE_SPACES)
+            while (_is.peek() == ch)
+                buffer += _is.get();
+
+        return _bufferedToken = {
+                   .offset  = _is.tellg(),
+                   .literal = buffer,
+                   .type    = TokenType::NEWLINE,
+        };
+    } else if (std::ispunct(ch)) {
+        if (ch == '_' || ch == '-')
+            return _bufferedToken = tryParseIdentifier(_is, _options);
+        else if (ch == '\'' || ch == '"' || ch == '`')
+            return _bufferedToken = tryParseString(_is, _options);
+
+        return _bufferedToken = {
+                   .offset  = _is.tellg(),
+                   .literal = std::string {static_cast<char>(ch)},
+                   .type    = TokenType::SYMBOL,
+        };
+    } else if (std::isdigit(ch))
+        return _bufferedToken = tryParseNumeric(_is, _options);
+    else if (std::isalpha(ch))
+        return _bufferedToken = tryParseIdentifier(_is, _options);
+    else
+        std::unreachable();
+}
+
 auto Tokenizer::peek(void) -> Token {
     const auto offset {_is.tellg()};
 
