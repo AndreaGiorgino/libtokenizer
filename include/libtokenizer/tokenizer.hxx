@@ -58,7 +58,6 @@ class Tokenizer final {
     ~Tokenizer(void) noexcept = default;
 
    public:
-    // Lookup /////////////////////////////////////////////////////////////////
     // Modifiers //////////////////////////////////////////////////////////////
     [[nodiscard]] auto get(void) -> Token;
 
@@ -72,9 +71,9 @@ class Tokenizer final {
 
    private:
     std::istream& _is;
-    bool _collapseStrings {false};
+    uint8_t _options {};
 
-    Token _buffer {.type = TokenType::NONE};
+    Token _bufferedToken {.type = TokenType::NONE};
 };
 
 #endif
