@@ -8,18 +8,19 @@ class Tokenizer final {
    public:
     enum class TokenType {
         NONE,
-        
+
         END_OF_FILE,
         NEWLINE,
         SPACE,
 
         IDENTIFIER,
-        NUMERIC_INT,
         NUMERIC_FLOAT,
+        NUMERIC_INT,
+        SYMBOL,
 
-        STRING_SINGLE_QUOTE,
-        STRING_DOUBLE_QUOTE,
         STRING_BACKTICK,
+        STRING_DOUBLE_QUOTE,
+        STRING_SINGLE_QUOTE,
     };
 
     struct Token final {
