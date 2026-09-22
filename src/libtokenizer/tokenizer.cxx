@@ -174,3 +174,23 @@ auto tryParseString(std::istream& is, uint8_t options) noexcept
     if (!is)
         throw std::runtime_error("invalid stream provided");
 }
+auto Tokenizer::peek(void) -> Token {
+    const auto offset {_is.tellg()};
+
+    (void)get();
+    _is.seekg(offset);
+
+    return _bufferedToken;
+}
+
+auto Tokenizer::tellg(void) -> std::streamoff {
+    return _is.tellg();
+}
+
+auto Tokenizer::seekg(std::streamoff offset) -> void {
+    _is.seekg(offset);
+}
+
+auto Tokenizer::eof(void) -> bool {
+    return _is.eof();
+}
