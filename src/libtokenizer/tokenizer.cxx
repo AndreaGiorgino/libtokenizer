@@ -34,6 +34,7 @@ auto tryParseIdentifier(std::istream& is, uint8_t options) noexcept
         };
     else if (prefix == '-'
              && !(options & Tokenizer::Options::ALLOW_DASH_IDENTIFIER))
+        // parse the underscore as a separate symbol
         return {
             .offset  = is.tellg(),
             .literal = std::string {static_cast<char>(is.get())},
@@ -49,13 +50,16 @@ auto tryParseIdentifier(std::istream& is, uint8_t options) noexcept
         ch = is.peek();
 
         if (ch == '-' && (options & Tokenizer::Options::ALLOW_DASH_IDENTIFIER))
+            // include dashes
             buffer += is.get();
         else if (ch == '_'
                  && (options & Tokenizer::Options::ALLOW_UNDERSCORE_IDENTIFIER))
+            // include underscores
             buffer += is.get();
         else if (std::isalnum(ch))
             buffer += is.get();
         else
+            // do not include not-alphanumeric characters
             break;
     } while (!is.eof());
 
@@ -90,8 +94,10 @@ auto tryParseNumeric(std::istream& is, uint8_t options) noexcept
 
         if (ch == '_'
             && (options & Tokenizer::Options::ALLOW_UNDERSCORE_NUMERIC))
+            // include underscores
             buffer += is.get();
         else if (ch == '.' && !isNumericFloat) {
+            // include the first dot
             isNumericFloat = true;
             buffer += is.get();
         } else if (std::isdigit(ch))
@@ -119,6 +125,7 @@ auto tryParseString(std::istream& is, uint8_t options) noexcept
            && "invalid call: first character is not a valid quotation mark");
 
     if (!(options & Tokenizer::Options::COLLAPSE_STRINGS))
+        // treat the quotation mark as a separate symbol
         return {
             .offset  = offset,
             .literal = std::string {static_cast<char>(quote)},
@@ -126,6 +133,7 @@ auto tryParseString(std::istream& is, uint8_t options) noexcept
         };
 
     const auto type {[&] {
+        // set the quotation type
         if (quote == '\'')
             return Tokenizer::TokenType::STRING_SINGLE_QUOTE;
         else if (quote == '"')
@@ -146,6 +154,7 @@ auto tryParseString(std::istream& is, uint8_t options) noexcept
         buffer += ch;
 
         if (ch == quote && buffer[buffer.size() - 1] != '\\') {
+            // close the quotation
             isClosed = true;
             break;
         } else if (ch == '\n')
@@ -153,8 +162,9 @@ auto tryParseString(std::istream& is, uint8_t options) noexcept
     } while (!is.eof());
 
     if (!isClosed) {
-        buffer = static_cast<char>(quote);
-        is.seekg((int)offset + 1);
+        // unclosed string, treat the quotation mark as a separate symbol and
+        // reset the stream offset
+        is.seekg(static_cast<int>(offset) + 1);
 
         return {
             .offset  = offset,
