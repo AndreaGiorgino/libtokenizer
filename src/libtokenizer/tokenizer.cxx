@@ -22,18 +22,11 @@ auto tryParseIdentifier(std::istream& is, uint8_t options) noexcept
 
     const auto prefix {is.peek()};
 
-    assert((prefix == '_' || prefix == '-' || std::isalpha(prefix))
+    assert((prefix == '_' || std::isalpha(prefix))
            && "invalid call: first character is not an identifier prefix");
 
     if (prefix == '_'
         && !(options & Tokenizer::Options::ALLOW_UNDERSCORE_IDENTIFIER))
-        return {
-            .offset  = is.tellg(),
-            .literal = std::string {static_cast<char>(is.get())},
-            .type    = Tokenizer::TokenType::SYMBOL,
-        };
-    else if (prefix == '-'
-             && !(options & Tokenizer::Options::ALLOW_DASH_IDENTIFIER))
         // parse the underscore as a separate symbol
         return {
             .offset  = is.tellg(),
@@ -63,7 +56,18 @@ auto tryParseIdentifier(std::istream& is, uint8_t options) noexcept
             break;
     } while (!is.eof());
 
-    if (buffer.size() == 1 && !std::isalpha(buffer[0]))
+    for (int i {static_cast<int>(buffer.size()) - 1}; i >= 0; i--)
+        // pop trailing dashes
+        if (buffer[i] == '-')
+            buffer.pop_back();
+        else
+            break;
+
+    // reset stream offset after buffer updates
+    is.seekg(static_cast<int>(offset) + buffer.size());
+
+    if (buffer.size() == 1 && buffer[0] == '_')
+        // check whether only an underscore remained
         return {
             .offset  = offset,
             .literal = buffer,
