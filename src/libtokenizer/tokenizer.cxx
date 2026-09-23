@@ -205,22 +205,24 @@ auto Tokenizer::get(void) -> Token {
     if (_bufferedToken.type != TokenType::NONE
         && _is.tellg() == _bufferedToken.offset)
         return _bufferedToken;
-    else if (_is.eof())
+
+    const auto ch {_is.peek()};
+
+    if (ch == EOF)
         return _bufferedToken = {
                    .offset  = _is.tellg(),
                    .literal = {},
                    .type    = TokenType::END_OF_FILE,
         };
-
-    const auto ch {_is.peek()};
-
-    if (std::isspace(ch)) {
+    else if (std::isspace(ch)) {
         if (_options & Options::IGNORE_SPACES) {
             while (std::isspace(_is.peek()))
                 _is.ignore();
+
             return get();
         }
 
+        const auto offset {_is.tellg()};
         std::string buffer {};
 
         if (_options & Options::COLLAPSE_SPACES)
@@ -228,27 +230,27 @@ auto Tokenizer::get(void) -> Token {
                 buffer += _is.get();
 
         return _bufferedToken = {
-                   .offset  = _is.tellg(),
+                   .offset  = offset,
                    .literal = buffer,
-                   .type    = TokenType::NEWLINE,
+                   .type = (ch == '\n' ? TokenType::NEWLINE : TokenType::SPACE),
         };
     } else if (std::ispunct(ch)) {
-        if (ch == '_' || ch == '-')
+        if (ch == '_')
             return _bufferedToken = tryParseIdentifier(_is, _options);
         else if (ch == '\'' || ch == '"' || ch == '`')
             return _bufferedToken = tryParseString(_is, _options);
 
         return _bufferedToken = {
                    .offset  = _is.tellg(),
-                   .literal = std::string {static_cast<char>(ch)},
+                   .literal = std::string {static_cast<char>(_is.get())},
                    .type    = TokenType::SYMBOL,
         };
     } else if (std::isdigit(ch))
         return _bufferedToken = tryParseNumeric(_is, _options);
     else if (std::isalpha(ch))
         return _bufferedToken = tryParseIdentifier(_is, _options);
-    else
-        std::unreachable();
+
+    std::unreachable();
 }
 
 auto Tokenizer::peek(void) -> Token {
