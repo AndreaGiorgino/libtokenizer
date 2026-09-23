@@ -1,6 +1,26 @@
-#include <iostream>
+#include <libtokenizer/tokenizer.hxx>
+#include <print>
+#include <sstream>
+#include <utility>
 
 auto main(int, char**) -> int {
-    std::cout << "Hello from example!" << std::endl;
+    std::stringstream ss {};
+
+    ss << R"(#include <iostream>
+
+auto main(int, char**) -> int {
+    std::cout << "Hello world" << std::endl;
+    return 0;
+})";
+
+    Tokenizer tokenizer {ss};
+    Tokenizer::Token token {};
+
+    do {
+        token = tokenizer.get();
+        std::println("[offset = {:3}, type = {}]: {:?}", token.offset,
+                     std::to_underlying(token.type), token.literal);
+    } while (token.type != Tokenizer::TokenType::END_OF_FILE);
+
     return 0;
 }
