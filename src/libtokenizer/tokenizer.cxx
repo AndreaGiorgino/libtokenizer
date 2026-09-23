@@ -110,6 +110,16 @@ auto tryParseNumeric(std::istream& is, uint8_t options) noexcept
             break;
     } while (!is.eof());
 
+    for (int i {static_cast<int>(buffer.size()) - 1}; i >= 0; i--)
+        // pop trailing underscores
+        if (buffer[i] == '_')
+            buffer.pop_back();
+        else
+            break;
+
+    // reset stream offset after buffer updates
+    is.seekg(static_cast<int>(offset) + buffer.size());
+
     return {
         .offset  = offset,
         .literal = buffer,
