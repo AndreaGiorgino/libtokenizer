@@ -6,6 +6,9 @@
 
 class Tokenizer final {
    public:
+    /*
+     * @brief Represents the token types
+     */
     enum class TokenType {
         NONE,
 
@@ -23,19 +26,79 @@ class Tokenizer final {
         STRING_SINGLE_QUOTE,
     };
 
+    /*
+     * @brief Represents a token
+     */
     struct Token final {
         std::streamoff offset {};
         std::string literal {};
         TokenType type {};
     };
 
+    /*
+     * @brief Represents the tokenizer options
+     */
     enum Options {
-        ALLOW_DASH_IDENTIFIER       = 1 << 0,
+        /*
+         * @brief Allow dashes to be part of identifiers
+         *
+         * Allowed examples:
+         *   - "some_var"
+         *   - "__some_var"
+         *   - "some_var__"
+         *
+         * Not allowed examples:
+         *   - "_" will parse the underscore as a token
+         *   - "_-" will parse the trailing dash as a separate token
+         */
+        ALLOW_DASH_IDENTIFIER = 1 << 0,
+
+        /*
+         * @brief Allow underscores to be part of identifiers
+         *
+         * Allowed examples:
+         *   - "some-var"
+         *
+         * Not allowed examples:
+         *   - "-some-var" will parse the leading dash as a separate token
+         *   - "some-var-" will parse the trailing dash as a separate token
+         */
         ALLOW_UNDERSCORE_IDENTIFIER = 1 << 1,
-        ALLOW_UNDERSCORE_NUMERIC    = 1 << 2,
-        COLLAPSE_SPACES             = 1 << 3,
-        COLLAPSE_STRINGS            = 1 << 4,
-        IGNORE_SPACES               = 1 << 5,
+
+        /*
+         * @brief Allow underscores to be part of numeric tokens
+         *
+         * Allowed examples:
+         *   - "1_000"
+         *   - "1_0_0"
+         *
+         * Not allowed examples:
+         *   - "_1" will parse the leading underscore as a separate token
+         *   - "1_" will parse the trailing underscore as a separate token
+         */
+        ALLOW_UNDERSCORE_NUMERIC = 1 << 2,
+
+        /*
+         * @brief Treat multiple matching spaces as one token
+         *
+         * Allowed examples:
+         *   - "\s\s"
+         *   - "\t\t"
+         *
+         * Not allowed examples:
+         *   - "\s\t"
+         */
+        COLLAPSE_SPACES = 1 << 3,
+
+        /*
+         * @brief Treat quotation marks as the start of a TokenType::STRING_*
+         */
+        COLLAPSE_STRINGS = 1 << 4,
+
+        /*
+         * @brief Do not return TokenType::NEWLINE and TokenType::SPACE
+         */
+        IGNORE_SPACES = 1 << 5,
     };
 
    public:
