@@ -2,6 +2,7 @@
 #ifndef H_UTILITY
 #define H_UTILITY
 
+#include <format>
 #include <libtokenizer/tokenizer.hxx>
 #include <utility>
 
