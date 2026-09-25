@@ -3,7 +3,7 @@
 #include "utility.hxx"
 
 auto Test_Tokenize_Basic(int, char**) -> int {
-    std::stringstream ss {"var_name 1234 3.14159 #"};
+    std::stringstream ss {"var_name 1_234 3.14159 #"};
     Tokenizer tokenizer {ss,
                          Tokenizer::OptionsSet {}
                              .set(Tokenizer::Options::AllowUnderscoreIdentifier)
@@ -14,7 +14,7 @@ auto Test_Tokenize_Basic(int, char**) -> int {
 
     expectToken(tokenizer.get(), "var_name", Tokenizer::TokenType::Identifier,
                 __LINE__);
-    expectToken(tokenizer.get(), "1234", Tokenizer::TokenType::NumericInt,
+    expectToken(tokenizer.get(), "1_234", Tokenizer::TokenType::NumericInt,
                 __LINE__);
     expectToken(tokenizer.get(), "3.14159", Tokenizer::TokenType::NumericFloat,
                 __LINE__);
