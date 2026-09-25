@@ -200,10 +200,6 @@ Tokenizer::Tokenizer(std::istream& is, OptionsSet options) : _is(is) {
 }
 
 auto Tokenizer::get(void) -> Token {
-    if (_bufferedToken.type != TokenType::None
-        && _is.tellg() == _bufferedToken.offset)
-        return _bufferedToken;
-
     const auto ch {_is.peek()};
 
     if (ch == EOF)
@@ -212,7 +208,14 @@ auto Tokenizer::get(void) -> Token {
                    .literal = {},
                    .type    = TokenType::Eos,
         };
-    else if (std::isspace(ch)) {
+
+    if (_bufferedToken.type != TokenType::None
+        && _is.tellg() == _bufferedToken.offset) {
+        _is.seekg(_bufferedToken.offset + _bufferedToken.literal.size());
+        return _bufferedToken;
+    }
+
+    if (std::isspace(ch)) {
         if (_options.test(Options::IgnoreSpaces)) {
             while (std::isspace(_is.peek()))
                 _is.ignore();
