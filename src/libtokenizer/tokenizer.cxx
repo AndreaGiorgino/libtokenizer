@@ -146,11 +146,11 @@ auto tryParseString(std::istream& is, Tokenizer::OptionsSet options) noexcept
 
     const auto type {[&] {
         // set the quotation type
-        if (quote == '\'')
-            return Tokenizer::TokenType::StringSingleQuote;
+        if (quote == '`')
+            return Tokenizer::TokenType::StringBacktick;
         else if (quote == '"')
-            return Tokenizer::TokenType::StringSingleQuote;
-        else if (quote == '`')
+            return Tokenizer::TokenType::StringDoubleQuote;
+        else if (quote == '\'')
             return Tokenizer::TokenType::StringSingleQuote;
 
         std::unreachable();
