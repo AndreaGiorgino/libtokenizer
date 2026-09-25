@@ -77,5 +77,22 @@ auto Test_Tokenize_IdentifierOptions(int, char**) -> int {
         expectToken(tokenizer.get(), "", Tokenizer::TokenType::Eos, __LINE__);
     }
 
+    {
+        // CollapseStrings
+        std::stringstream ss {
+            R"(`backtick quote` "double quote" 'single quote')"};
+        Tokenizer tokenizer {ss, Tokenizer::OptionsSet {}
+                                     .set(Tokenizer::Options::CollapseStrings)
+                                     .set(Tokenizer::Options::IgnoreSpaces)};
+
+        expectToken(tokenizer.get(), "`backtick quote`",
+                    Tokenizer::TokenType::StringBacktick, __LINE__);
+        expectToken(tokenizer.get(), R"("double quote")",
+                    Tokenizer::TokenType::StringDoubleQuote, __LINE__);
+        expectToken(tokenizer.get(), "'single quote'",
+                    Tokenizer::TokenType::StringSingleQuote, __LINE__);
+        expectToken(tokenizer.get(), "", Tokenizer::TokenType::Eos, __LINE__);
+    }
+
     return 0;
 }
