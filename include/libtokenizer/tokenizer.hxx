@@ -2,6 +2,7 @@
 #ifndef H_TOKENIZER
 #define H_TOKENIZER
 
+#include <bitset>
 #include <istream>
 
 class Tokenizer final {
@@ -10,20 +11,20 @@ class Tokenizer final {
      * @brief Represents the token types
      */
     enum class TokenType {
-        NONE,
+        None,
 
-        END_OF_FILE,
-        NEWLINE,
-        SPACE,
+        Eos,
+        NewLine,
+        Space,
 
-        IDENTIFIER,
-        NUMERIC_FLOAT,
-        NUMERIC_INT,
-        SYMBOL,
+        Identifier,
+        NumericFloat,
+        NumericInt,
+        Symbol,
 
-        STRING_BACKTICK,
-        STRING_DOUBLE_QUOTE,
-        STRING_SINGLE_QUOTE,
+        StringBacktick,
+        StringDoubleQuote,
+        StringSingleQuote,
     };
 
     /*
@@ -51,7 +52,7 @@ class Tokenizer final {
          *   - "_" will parse the underscore as a token
          *   - "_-" will parse the trailing dash as a separate token
          */
-        ALLOW_DASH_IDENTIFIER = 1 << 0,
+        AllowDashIdentifier,
 
         /*
          * @brief Allow underscores to be part of identifiers
@@ -63,7 +64,7 @@ class Tokenizer final {
          *   - "-some-var" will parse the leading dash as a separate token
          *   - "some-var-" will parse the trailing dash as a separate token
          */
-        ALLOW_UNDERSCORE_IDENTIFIER = 1 << 1,
+        AllowUnderscoreIdentifier,
 
         /*
          * @brief Allow underscores to be part of numeric tokens
@@ -76,7 +77,7 @@ class Tokenizer final {
          *   - "_1" will parse the leading underscore as a separate token
          *   - "1_" will parse the trailing underscore as a separate token
          */
-        ALLOW_UNDERSCORE_NUMERIC = 1 << 2,
+        AllowUnderscoreNumeric,
 
         /*
          * @brief Treat multiple matching spaces as one token
@@ -88,26 +89,32 @@ class Tokenizer final {
          * Not allowed examples:
          *   - "\s\t"
          */
-        COLLAPSE_SPACES = 1 << 3,
+        CollapseSpaces,
 
         /*
          * @brief Treat quotation marks as the start of a TokenType::STRING_*
          */
-        COLLAPSE_STRINGS = 1 << 4,
+        CollapseStrings,
 
         /*
          * @brief Do not return TokenType::NEWLINE and TokenType::SPACE
          */
-        IGNORE_SPACES = 1 << 5,
+        IgnoreSpaces,
+
+        __Count__,
     };
+
+    using OptionsSet = std::bitset<Options::__Count__>;
 
    public:
     // Ctors ///////////////////////////////////////////////////////////////////
     Tokenizer(void) noexcept = delete;
-    Tokenizer(std::istream& is, uint8_t options = ALLOW_UNDERSCORE_IDENTIFIER
-                                                  | ALLOW_UNDERSCORE_NUMERIC
-                                                  | COLLAPSE_SPACES
-                                                  | COLLAPSE_STRINGS);
+    Tokenizer(std::istream& is,
+              OptionsSet options = OptionsSet {}
+                                       .set(Options::AllowUnderscoreIdentifier)
+                                       .set(Options::AllowUnderscoreNumeric)
+                                       .set(Options::CollapseSpaces)
+                                       .set(Options::CollapseStrings));
 
     // Copy ///////////////////////////////////////////////////////////////////
     Tokenizer(const Tokenizer&) noexcept                     = delete;
@@ -134,9 +141,9 @@ class Tokenizer final {
 
    private:
     std::istream& _is;
-    uint8_t _options {};
+    OptionsSet _options {};
 
-    Token _bufferedToken {.type = TokenType::NONE};
+    Token _bufferedToken {.type = TokenType::None};
 };
 
 #endif

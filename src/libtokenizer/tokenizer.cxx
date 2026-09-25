@@ -5,18 +5,21 @@
 // Declarations ///////////////////////////////////////////////////////////////
 
 [[nodiscard]] auto tryParseIdentifier(std::istream& is,
-                                      uint8_t options) noexcept
+                                      Tokenizer::OptionsSet options) noexcept
     -> Tokenizer::Token;
 
-[[nodiscard]] auto tryParseString(std::istream& is, uint8_t options) noexcept
+[[nodiscard]] auto tryParseString(std::istream& is,
+                                  Tokenizer::OptionsSet options) noexcept
     -> Tokenizer::Token;
 
-[[nodiscard]] auto tryParseNumeric(std::istream& is, uint8_t options) noexcept
+[[nodiscard]] auto tryParseNumeric(std::istream& is,
+                                   Tokenizer::OptionsSet options) noexcept
     -> Tokenizer::Token;
 
 // Definitions ////////////////////////////////////////////////////////////////
 
-auto tryParseIdentifier(std::istream& is, uint8_t options) noexcept
+auto tryParseIdentifier(std::istream& is,
+                        Tokenizer::OptionsSet options) noexcept
     -> Tokenizer::Token {
     assert(!is.eof() && "invalid call: stream should not be eof");
 
@@ -26,12 +29,12 @@ auto tryParseIdentifier(std::istream& is, uint8_t options) noexcept
            && "invalid call: first character is not an identifier prefix");
 
     if (prefix == '_'
-        && !(options & Tokenizer::Options::ALLOW_UNDERSCORE_IDENTIFIER))
+        && !options.test(Tokenizer::Options::AllowUnderscoreIdentifier))
         // parse the underscore as a separate symbol
         return {
             .offset  = is.tellg(),
             .literal = std::string {static_cast<char>(is.get())},
-            .type    = Tokenizer::TokenType::SYMBOL,
+            .type    = Tokenizer::TokenType::Symbol,
         };
 
     const auto offset {is.tellg()};
@@ -42,11 +45,11 @@ auto tryParseIdentifier(std::istream& is, uint8_t options) noexcept
     do {
         ch = is.peek();
 
-        if (ch == '-' && (options & Tokenizer::Options::ALLOW_DASH_IDENTIFIER))
+        if (ch == '-' && options.test(Tokenizer::Options::AllowDashIdentifier))
             // include dashes
             buffer += is.get();
         else if (ch == '_'
-                 && (options & Tokenizer::Options::ALLOW_UNDERSCORE_IDENTIFIER))
+                 && options.test(Tokenizer::Options::AllowUnderscoreIdentifier))
             // include underscores
             buffer += is.get();
         else if (std::isalnum(ch))
@@ -71,17 +74,17 @@ auto tryParseIdentifier(std::istream& is, uint8_t options) noexcept
         return {
             .offset  = offset,
             .literal = buffer,
-            .type    = Tokenizer::TokenType::SYMBOL,
+            .type    = Tokenizer::TokenType::Symbol,
         };
 
     return {
         .offset  = offset,
         .literal = buffer,
-        .type    = Tokenizer::TokenType::IDENTIFIER,
+        .type    = Tokenizer::TokenType::Identifier,
     };
 }
 
-auto tryParseNumeric(std::istream& is, uint8_t options) noexcept
+auto tryParseNumeric(std::istream& is, Tokenizer::OptionsSet options) noexcept
     -> Tokenizer::Token {
     assert(!is.eof() && "invalid call: stream should not be eof");
     assert(std::isdigit(is.peek())
@@ -97,7 +100,7 @@ auto tryParseNumeric(std::istream& is, uint8_t options) noexcept
         ch = is.peek();
 
         if (ch == '_'
-            && (options & Tokenizer::Options::ALLOW_UNDERSCORE_NUMERIC))
+            && options.test(Tokenizer::Options::AllowUnderscoreNumeric))
             // include underscores
             buffer += is.get();
         else if (ch == '.' && !isNumericFloat) {
@@ -123,12 +126,12 @@ auto tryParseNumeric(std::istream& is, uint8_t options) noexcept
     return {
         .offset  = offset,
         .literal = buffer,
-        .type    = isNumericFloat ? Tokenizer::TokenType::NUMERIC_FLOAT
-                                  : Tokenizer::TokenType::NUMERIC_INT,
+        .type    = isNumericFloat ? Tokenizer::TokenType::NumericFloat
+                                  : Tokenizer::TokenType::NumericInt,
     };
 }
 
-auto tryParseString(std::istream& is, uint8_t options) noexcept
+auto tryParseString(std::istream& is, Tokenizer::OptionsSet options) noexcept
     -> Tokenizer::Token {
     assert(!is.eof() && "invalid call: stream should not be eof");
 
@@ -138,22 +141,22 @@ auto tryParseString(std::istream& is, uint8_t options) noexcept
     assert((quote == '\'' || quote == '"' || quote == '`')
            && "invalid call: first character is not a valid quotation mark");
 
-    if (!(options & Tokenizer::Options::COLLAPSE_STRINGS))
+    if (!options.test(Tokenizer::Options::CollapseStrings))
         // treat the quotation mark as a separate symbol
         return {
             .offset  = offset,
             .literal = std::string {static_cast<char>(quote)},
-            .type    = Tokenizer::TokenType::SYMBOL,
+            .type    = Tokenizer::TokenType::Symbol,
         };
 
     const auto type {[&] {
         // set the quotation type
         if (quote == '\'')
-            return Tokenizer::TokenType::STRING_SINGLE_QUOTE;
+            return Tokenizer::TokenType::StringSingleQuote;
         else if (quote == '"')
-            return Tokenizer::TokenType::STRING_SINGLE_QUOTE;
+            return Tokenizer::TokenType::StringSingleQuote;
         else if (quote == '`')
-            return Tokenizer::TokenType::STRING_SINGLE_QUOTE;
+            return Tokenizer::TokenType::StringSingleQuote;
 
         std::unreachable();
     }()};
@@ -183,7 +186,7 @@ auto tryParseString(std::istream& is, uint8_t options) noexcept
         return {
             .offset  = offset,
             .literal = std::string {static_cast<char>(quote)},
-            .type    = Tokenizer::TokenType::SYMBOL,
+            .type    = Tokenizer::TokenType::Symbol,
         };
     }
 
@@ -194,15 +197,15 @@ auto tryParseString(std::istream& is, uint8_t options) noexcept
     };
 }
 
-Tokenizer::Tokenizer(std::istream& is, uint8_t options)
-    : _is(is),
-      _options(options) {
+Tokenizer::Tokenizer(std::istream& is, OptionsSet options) : _is(is) {
     if (!is)
         throw std::runtime_error("invalid stream provided");
+
+    _options = options;
 }
 
 auto Tokenizer::get(void) -> Token {
-    if (_bufferedToken.type != TokenType::NONE
+    if (_bufferedToken.type != TokenType::None
         && _is.tellg() == _bufferedToken.offset)
         return _bufferedToken;
 
@@ -212,10 +215,10 @@ auto Tokenizer::get(void) -> Token {
         return _bufferedToken = {
                    .offset  = _is.tellg(),
                    .literal = {},
-                   .type    = TokenType::END_OF_FILE,
+                   .type    = TokenType::Eos,
         };
     else if (std::isspace(ch)) {
-        if (_options & Options::IGNORE_SPACES) {
+        if (_options.test(Options::IgnoreSpaces)) {
             while (std::isspace(_is.peek()))
                 _is.ignore();
 
@@ -225,14 +228,14 @@ auto Tokenizer::get(void) -> Token {
         const auto offset {_is.tellg()};
         std::string buffer {};
 
-        if (_options & Options::COLLAPSE_SPACES)
+        if (_options.test(Options::CollapseSpaces))
             while (_is.peek() == ch)
                 buffer += _is.get();
 
         return _bufferedToken = {
                    .offset  = offset,
                    .literal = buffer,
-                   .type = (ch == '\n' ? TokenType::NEWLINE : TokenType::SPACE),
+                   .type = (ch == '\n' ? TokenType::NewLine : TokenType::Space),
         };
     } else if (std::ispunct(ch)) {
         if (ch == '_')
@@ -243,7 +246,7 @@ auto Tokenizer::get(void) -> Token {
         return _bufferedToken = {
                    .offset  = _is.tellg(),
                    .literal = std::string {static_cast<char>(_is.get())},
-                   .type    = TokenType::SYMBOL,
+                   .type    = TokenType::Symbol,
         };
     } else if (std::isdigit(ch))
         return _bufferedToken = tryParseNumeric(_is, _options);
