@@ -92,18 +92,21 @@ class Tokenizer final {
         CollapseSpaces,
 
         /*
-         * @brief Treat quotation marks as the start of a TokenType::STRING_*
+         * @brief Treat quotation marks as the start of a TokenType::String*
          */
         CollapseStrings,
 
         /*
-         * @brief Do not return TokenType::NEWLINE and TokenType::SPACE
+         * @brief Do not return TokenType::NewLine and TokenType::SPACE
          */
         IgnoreSpaces,
 
         __Count__,
     };
 
+    /*
+     * @brief Represents the bitset containing the options
+     */
     using OptionsSet = std::bitset<Options::__Count__>;
 
    public:
@@ -129,14 +132,31 @@ class Tokenizer final {
 
    public:
     // Modifiers //////////////////////////////////////////////////////////////
+    /**
+     * @brief Get the next token
+     */
     [[nodiscard]] auto get(void) -> Token;
 
+    /**
+     * @brief Peek the next token
+     */
     [[nodiscard]] auto peek(void) -> Token;
 
+    /**
+     * @brief Get the stream reading position
+     */
     [[nodiscard]] auto tellg(void) -> std::streamoff;
 
+    /**
+     * @brief Set the stream reading position
+     *
+     * @param offset The offset from the beginning of the stream
+     */
     auto seekg(std::streamoff offset) -> void;
 
+    /**
+     * @brief Check wether the stream has reached EOF
+     */
     [[nodiscard]] auto eof(void) -> bool;
 
    private:
