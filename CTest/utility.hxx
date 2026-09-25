@@ -8,27 +8,27 @@
 static auto getTokenTypeName(Tokenizer::TokenType type) -> std::string {
     switch (type) {
         case Tokenizer::TokenType::None:
-            return "NONE";
+            return "None";
         case Tokenizer::TokenType::Eos:
-            return "EOS";
+            return "Eos";
         case Tokenizer::TokenType::NewLine:
-            return "NEWLINE";
+            return "NewLine";
         case Tokenizer::TokenType::Space:
-            return "SPACE";
+            return "Space";
         case Tokenizer::TokenType::Identifier:
-            return "IDENTIFIER";
+            return "Identifier";
         case Tokenizer::TokenType::NumericFloat:
-            return "NUMERIC_FLOAT";
+            return "NumericFloat";
         case Tokenizer::TokenType::NumericInt:
-            return "NUMERIC_INT";
+            return "NumericInt";
         case Tokenizer::TokenType::Symbol:
-            return "SYMBOL";
+            return "Symbol";
         case Tokenizer::TokenType::StringBacktick:
-            return "STRING_BACKTICK";
-        case Tokenizer::TokenType::StringDoubleQuote:
-            return "STRING_DOUBLE_QUOTE";
+            return "StringBacktick";
         case Tokenizer::TokenType::StringSingleQuote:
-            return "STRING_SINGLE_QUOTE";
+            return "StringSingleQuote";
+        case Tokenizer::TokenType::StringDoubleQuote:
+            return "StringDoubleQuote";
     }
 
     std::unreachable();
