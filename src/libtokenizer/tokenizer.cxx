@@ -46,16 +46,13 @@ auto tryParseIdentifier(std::istream& is,
         ch = is.peek();
 
         if (ch == '-' && options.test(Tokenizer::Options::AllowDashIdentifier))
-            // include dashes
             buffer += is.get();
         else if (ch == '_'
                  && options.test(Tokenizer::Options::AllowUnderscoreIdentifier))
-            // include underscores
             buffer += is.get();
         else if (std::isalnum(ch))
             buffer += is.get();
         else
-            // do not include not-alphanumeric characters
             break;
     } while (!is.eof());
 
@@ -101,10 +98,8 @@ auto tryParseNumeric(std::istream& is, Tokenizer::OptionsSet options) noexcept
 
         if (ch == '_'
             && options.test(Tokenizer::Options::AllowUnderscoreNumeric))
-            // include underscores
             buffer += is.get();
         else if (ch == '.' && !isNumericFloat) {
-            // include the first dot
             isNumericFloat = true;
             buffer += is.get();
         } else if (std::isdigit(ch))
@@ -226,7 +221,7 @@ auto Tokenizer::get(void) -> Token {
         }
 
         const auto offset {_is.tellg()};
-        std::string buffer {};
+        std::string buffer {static_cast<char>(_is.get())};
 
         if (_options.test(Options::CollapseSpaces))
             while (_is.peek() == ch)
