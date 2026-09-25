@@ -28,15 +28,15 @@ auto Test_Tokenize_IdentifierOptions(int, char**) -> int {
     }
 
     {
-        std::stringstream ss {"some-var  1_1"};
+        // AllowDashIdentifier
+        std::stringstream ss {"some-var"};
         Tokenizer tokenizer {ss, Tokenizer::OptionsSet {}.set(
                                      Tokenizer::Options::AllowDashIdentifier)};
 
         expectToken(tokenizer.get(), "some-var",
                     Tokenizer::TokenType::Identifier, __LINE__);
-        expectToken(tokenizer.get(), " ", Tokenizer::TokenType::Space,
-                    __LINE__);
-        expectToken(tokenizer.get(), " ", Tokenizer::TokenType::Space,
+        expectToken(tokenizer.get(), "", Tokenizer::TokenType::Eos, __LINE__);
+    }
                     __LINE__);
         expectToken(tokenizer.get(), "1", Tokenizer::TokenType::NumericInt,
                     __LINE__);
