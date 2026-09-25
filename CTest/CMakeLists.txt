@@ -9,6 +9,7 @@ set(
 
     Test_Ctor.cxx
     Test_Tokenize_Empty.cxx
+    Test_Tokenize_Basic.cxx
 )
 
 create_test_sourcelist(
