@@ -6,7 +6,8 @@ cmake_minimum_required(VERSION 3.24)
 
 set(
     SOURCE_FILES
-    Test.cxx
+
+    Test_Ctor.cxx
 )
 
 create_test_sourcelist(
