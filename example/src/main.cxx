@@ -5,14 +5,18 @@
 
 auto main(int, char**) -> int {
     std::stringstream ss {
-        R"(#include <iostream>
+        R"(
+        #include <iostream>
 
-auto main(int, char**) -> int {
-    std::cout << "Hello world" << std::endl;
-    return 0;
-})"};
+        auto main(int, char**) -> int {
+            std::cout << "Hello world" << std::endl;
+            return 0;
+        }
+)"};
 
-    Tokenizer tokenizer {ss};
+    Tokenizer tokenizer {ss, Tokenizer::OptionsSet {}
+                                 .set(Tokenizer::Options::CollapseStrings)
+                                 .set(Tokenizer::Options::IgnoreSpaces)};
     Tokenizer::Token token {};
 
     do {
