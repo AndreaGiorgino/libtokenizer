@@ -49,8 +49,18 @@ auto Test_Tokenize_IdentifierOptions(int, char**) -> int {
                     Tokenizer::TokenType::Identifier, __LINE__);
         expectToken(tokenizer.get(), "", Tokenizer::TokenType::Eos, __LINE__);
     }
+
+    {
+        // AllowUnderscoreNumeric
+        std::stringstream ss {"1_1"};
+        Tokenizer tokenizer {ss,
+                             Tokenizer::OptionsSet {}.set(
+                                 Tokenizer::Options::AllowUnderscoreNumeric)};
+
+        expectToken(tokenizer.get(), "1_1", Tokenizer::TokenType::NumericInt,
                     __LINE__);
-        expectToken(tokenizer.get(), "1", Tokenizer::TokenType::NumericInt,
+        expectToken(tokenizer.get(), "", Tokenizer::TokenType::Eos, __LINE__);
+    }
                     __LINE__);
         expectToken(tokenizer.get(), "_", Tokenizer::TokenType::Symbol,
                     __LINE__);
