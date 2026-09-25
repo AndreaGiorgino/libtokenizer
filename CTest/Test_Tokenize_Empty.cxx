@@ -6,7 +6,7 @@ auto Test_Tokenize_Empty(int, char**) -> int {
     std::stringstream ss {};
     Tokenizer tokenizer {ss};
 
-    expectToken(tokenizer.get(), "", Tokenizer::TokenType::Eos, __LINE__);
+    expectToken(tokenizer.get(), "", Tokenizer::TokenType::Eof, __LINE__);
 
     return 0;
 }

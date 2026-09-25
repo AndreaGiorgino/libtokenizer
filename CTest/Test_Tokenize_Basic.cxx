@@ -19,7 +19,7 @@ auto Test_Tokenize_Basic(int, char**) -> int {
     expectToken(tokenizer.get(), "3.14159", Tokenizer::TokenType::NumericFloat,
                 __LINE__);
     expectToken(tokenizer.get(), "#", Tokenizer::TokenType::Symbol, __LINE__);
-    expectToken(tokenizer.get(), "", Tokenizer::TokenType::Eos, __LINE__);
+    expectToken(tokenizer.get(), "", Tokenizer::TokenType::Eof, __LINE__);
 
     return 0;
 }

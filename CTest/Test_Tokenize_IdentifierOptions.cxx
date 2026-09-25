@@ -24,7 +24,7 @@ auto Test_Tokenize_IdentifierOptions(int, char**) -> int {
                     __LINE__);
         expectToken(tokenizer.get(), "1", Tokenizer::TokenType::NumericInt,
                     __LINE__);
-        expectToken(tokenizer.get(), "", Tokenizer::TokenType::Eos, __LINE__);
+        expectToken(tokenizer.get(), "", Tokenizer::TokenType::Eof, __LINE__);
     }
 
     {
@@ -35,7 +35,7 @@ auto Test_Tokenize_IdentifierOptions(int, char**) -> int {
 
         expectToken(tokenizer.get(), "some-var",
                     Tokenizer::TokenType::Identifier, __LINE__);
-        expectToken(tokenizer.get(), "", Tokenizer::TokenType::Eos, __LINE__);
+        expectToken(tokenizer.get(), "", Tokenizer::TokenType::Eof, __LINE__);
     }
 
     {
@@ -47,7 +47,7 @@ auto Test_Tokenize_IdentifierOptions(int, char**) -> int {
 
         expectToken(tokenizer.get(), "some_var",
                     Tokenizer::TokenType::Identifier, __LINE__);
-        expectToken(tokenizer.get(), "", Tokenizer::TokenType::Eos, __LINE__);
+        expectToken(tokenizer.get(), "", Tokenizer::TokenType::Eof, __LINE__);
     }
 
     {
@@ -59,7 +59,7 @@ auto Test_Tokenize_IdentifierOptions(int, char**) -> int {
 
         expectToken(tokenizer.get(), "1_1", Tokenizer::TokenType::NumericInt,
                     __LINE__);
-        expectToken(tokenizer.get(), "", Tokenizer::TokenType::Eos, __LINE__);
+        expectToken(tokenizer.get(), "", Tokenizer::TokenType::Eof, __LINE__);
     }
 
     {
@@ -74,7 +74,7 @@ auto Test_Tokenize_IdentifierOptions(int, char**) -> int {
                     __LINE__);
         expectToken(tokenizer.get(), "\n\n", Tokenizer::TokenType::NewLine,
                     __LINE__);
-        expectToken(tokenizer.get(), "", Tokenizer::TokenType::Eos, __LINE__);
+        expectToken(tokenizer.get(), "", Tokenizer::TokenType::Eof, __LINE__);
     }
 
     {
@@ -91,7 +91,7 @@ auto Test_Tokenize_IdentifierOptions(int, char**) -> int {
                     Tokenizer::TokenType::StringDoubleQuote, __LINE__);
         expectToken(tokenizer.get(), "'single quote'",
                     Tokenizer::TokenType::StringSingleQuote, __LINE__);
-        expectToken(tokenizer.get(), "", Tokenizer::TokenType::Eos, __LINE__);
+        expectToken(tokenizer.get(), "", Tokenizer::TokenType::Eof, __LINE__);
     }
 
     return 0;

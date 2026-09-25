@@ -206,7 +206,7 @@ auto Tokenizer::get(void) -> Token {
         return _bufferedToken = {
                    .offset  = _is.tellg(),
                    .literal = {},
-                   .type    = TokenType::Eos,
+                   .type    = TokenType::Eof,
         };
 
     if (_bufferedToken.type != TokenType::None

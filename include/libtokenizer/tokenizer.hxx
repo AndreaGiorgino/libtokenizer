@@ -13,7 +13,7 @@ class Tokenizer final {
     enum class TokenType {
         None,
 
-        Eos,
+        Eof,
         NewLine,
         Space,
 

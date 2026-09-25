@@ -9,7 +9,7 @@ static auto getTokenTypeName(Tokenizer::TokenType type) -> std::string {
     switch (type) {
         case Tokenizer::TokenType::None:
             return "None";
-        case Tokenizer::TokenType::Eos:
+        case Tokenizer::TokenType::Eof:
             return "Eos";
         case Tokenizer::TokenType::NewLine:
             return "NewLine";
