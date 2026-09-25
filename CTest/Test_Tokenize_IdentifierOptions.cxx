@@ -86,7 +86,7 @@ auto Test_Tokenize_IdentifierOptions(int, char**) -> int {
                                      .set(Tokenizer::Options::IgnoreSpaces)};
 
         expectToken(tokenizer.get(), "`backtick quote`",
-                    Tokenizer::TokenType::StringBacktick, __LINE__);
+                    Tokenizer::TokenType::StringBacktickQuote, __LINE__);
         expectToken(tokenizer.get(), R"("double quote")",
                     Tokenizer::TokenType::StringDoubleQuote, __LINE__);
         expectToken(tokenizer.get(), "'single quote'",

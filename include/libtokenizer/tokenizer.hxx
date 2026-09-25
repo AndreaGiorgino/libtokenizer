@@ -22,7 +22,7 @@ class Tokenizer final {
         NumericInt,
         Symbol,
 
-        StringBacktick,
+        StringBacktickQuote,
         StringDoubleQuote,
         StringSingleQuote,
     };

@@ -23,7 +23,7 @@ static auto getTokenTypeName(Tokenizer::TokenType type) -> std::string {
             return "NumericInt";
         case Tokenizer::TokenType::Symbol:
             return "Symbol";
-        case Tokenizer::TokenType::StringBacktick:
+        case Tokenizer::TokenType::StringBacktickQuote:
             return "StringBacktick";
         case Tokenizer::TokenType::StringSingleQuote:
             return "StringSingleQuote";
