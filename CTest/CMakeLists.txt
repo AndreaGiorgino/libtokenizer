@@ -6,18 +6,14 @@ cmake_minimum_required(VERSION 3.24)
 
 set(
     SOURCE_FILES
-    TestOpenFile.cxx
-    TestOpenFileErrorEmptyString.cxx
-    TestOpenFileErrorFileNotFound.cxx
-    TestOpenFileErrorFileNotRegular.cxx
-    TestParseFileGenerator.cxx
-    TestParseFileStreamEof.cxx
-    TestParseFileStreamGet.cxx
-    TestParseFileStreamIgnore.cxx
-    TestParseFileStreamIgnoreMultiple.cxx
-    TestParseFileStreamPeek.cxx
-    TestParseFileStreamSeek.cxx
-    TestParseFileStreamTell.cxx
+
+    Test_Ctor.cxx
+
+    Test_Tokenize_Empty.cxx
+    Test_Tokenize_Basic.cxx
+    Test_Tokenize_IdentifierOptions.cxx
+
+    Test_StreamNavigation.cxx
 )
 
 create_test_sourcelist(
@@ -30,9 +26,11 @@ create_test_sourcelist(
 # Target
 #
 
+set(CMAKE_BUILD_TYPE Release)
+
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_executable(
@@ -53,11 +51,6 @@ target_compile_options(
     PRIVATE -Wextra -Wall -pedantic
 )
 
-target_include_directories(
-    CommonCxxTests
-    PRIVATE $<TARGET_FILE_DIR:${PROJECT_NAME}>/include
-)
-
 target_link_libraries(
     CommonCxxTests
     PRIVATE ${PROJECT_NAME}
@@ -71,4 +64,4 @@ foreach(TEST_FILE ${SOURCE_FILES})
     )
 endforeach()
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/PostBuild.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/CMake/PostBuild.cmake)

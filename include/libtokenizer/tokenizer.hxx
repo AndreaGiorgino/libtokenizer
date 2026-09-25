@@ -1,149 +1,169 @@
 #pragma once
+#ifndef H_TOKENIZER
+#define H_TOKENIZER
 
-/*
- * libtokenizer - version 1.0.0-alpha
- */
+#include <bitset>
+#include <istream>
 
-#include <filesystem>
-#include <generator>
-#include <string>
-
-#include "libparser/parser.hxx"
-
-namespace libtokenizer {
-/**
- * @class tokenizer
- * @brief Represents the tokenizer
- *
- */
-class tokenizer final {
-   public: // definitions
-    /**
-     * @enum token_t
-     * @brief Enumerates the token types
+class Tokenizer final {
+   public:
+    /*
+     * @brief Represents the token types
      */
-    enum class token_t {
-        // syntax
-        END_OF_FILE,
-        NEWLINE,
-        SPACE,
+    enum class TokenType {
+        None,
 
-        // symbols
-        AMP,
-        AT,
-        BACKSLASH,
-        BANG,
-        BAR,
-        CLOSE_BRACKET,
-        CLOSE_PAREN,
-        CLOSE_SQUARE,
-        COLON,
-        COMMA,
-        DASH,
-        DOT,
-        DOUBLE_QUOTE,
-        EQUALS,
-        GREATHER,
-        HASH,
-        LESS,
-        OPEN_BRACKET,
-        OPEN_PAREN,
-        OPEN_SQUARE,
-        PERC,
-        PLUS,
-        QUESTION,
-        QUOTE,
-        SEMICOLON,
-        SLASH,
-        STAR,
-        UNDERSCORE,
+        Eof,
+        NewLine,
+        Space,
 
-        // other
-        ALPHANUMERIC,
-        NUMERIC,
-        SYMBOL,
-        STRING_DOUBLE_QUOTED,
-        STRING_QUOTED,
+        Identifier,
+        NumericFloat,
+        NumericInt,
+        Symbol,
+
+        StringBacktickQuote,
+        StringDoubleQuote,
+        StringSingleQuote,
     };
 
-    /**
-     * @class token
-     * @brief Represents the parsed part
-     *
+    /*
+     * @brief Represents a token
      */
-    struct token final {
-        std::streamoff position {-1};
+    struct Token final {
+        std::streamoff offset {};
         std::string literal {};
-        token_t type {};
+        TokenType type {};
     };
 
-   public: // ctors
-    tokenizer(std::string_view sourceFilePath);
-
-    tokenizer(const tokenizer&)                     = delete;
-    auto operator =(const tokenizer&) -> tokenizer& = delete;
-
-    tokenizer(tokenizer&&)                     = delete;
-    auto operator =(tokenizer&&) -> tokenizer& = delete;
-
-    ~tokenizer(void) = default;
-
-   public: // methods
-    /**
-     * @brief Get the token type name
-     *
-     * @param type The token type to get the name of
+    /*
+     * @brief Represents the tokenizer options
      */
-    [[nodiscard]]
-    static auto get_token_t_name(token_t type) -> std::string;
+    enum Options {
+        /*
+         * @brief Allow dashes to be part of identifiers
+         *
+         * Allowed examples:
+         *   - "some_var"
+         *   - "__some_var"
+         *   - "some_var__"
+         *
+         * Not allowed examples:
+         *   - "_" will parse the underscore as a token
+         *   - "_-" will parse the trailing dash as a separate token
+         */
+        AllowDashIdentifier,
 
+        /*
+         * @brief Allow underscores to be part of identifiers
+         *
+         * Allowed examples:
+         *   - "some-var"
+         *
+         * Not allowed examples:
+         *   - "-some-var" will parse the leading dash as a separate token
+         *   - "some-var-" will parse the trailing dash as a separate token
+         */
+        AllowUnderscoreIdentifier,
+
+        /*
+         * @brief Allow underscores to be part of numeric tokens
+         *
+         * Allowed examples:
+         *   - "1_000"
+         *   - "1_0_0"
+         *
+         * Not allowed examples:
+         *   - "_1" will parse the leading underscore as a separate token
+         *   - "1_" will parse the trailing underscore as a separate token
+         */
+        AllowUnderscoreNumeric,
+
+        /*
+         * @brief Treat multiple matching spaces as one token
+         *
+         * Allowed examples:
+         *   - "\s\s"
+         *   - "\t\t"
+         *
+         * Not allowed examples:
+         *   - "\s\t"
+         */
+        CollapseSpaces,
+
+        /*
+         * @brief Treat quotation marks as the start of a TokenType::String*
+         */
+        CollapseStrings,
+
+        /*
+         * @brief Do not return TokenType::NewLine and TokenType::SPACE
+         */
+        IgnoreSpaces,
+
+        __Count__,
+    };
+
+    /*
+     * @brief Represents the bitset containing the options
+     */
+    using OptionsSet = std::bitset<Options::__Count__>;
+
+   public:
+    // Ctors ///////////////////////////////////////////////////////////////////
+    Tokenizer(void) noexcept = delete;
+    Tokenizer(std::istream& is,
+              OptionsSet options = OptionsSet {}
+                                       .set(Options::AllowUnderscoreIdentifier)
+                                       .set(Options::AllowUnderscoreNumeric)
+                                       .set(Options::CollapseSpaces)
+                                       .set(Options::CollapseStrings));
+
+    // Copy ///////////////////////////////////////////////////////////////////
+    Tokenizer(const Tokenizer&) noexcept                     = delete;
+    auto operator =(const Tokenizer&) noexcept -> Tokenizer& = delete;
+
+    // Move ///////////////////////////////////////////////////////////////////
+    Tokenizer(Tokenizer&&) noexcept                     = delete;
+    auto operator =(Tokenizer&&) noexcept -> Tokenizer& = delete;
+
+    // Dtor ///////////////////////////////////////////////////////////////////
+    ~Tokenizer(void) noexcept = default;
+
+   public:
+    // Modifiers //////////////////////////////////////////////////////////////
     /**
      * @brief Get the next token
      */
-    [[nodiscard]]
-    auto get(void) -> token;
+    [[nodiscard]] auto get(void) -> Token;
 
     /**
      * @brief Peek the next token
      */
-    [[nodiscard]]
-    auto peek(void) -> token;
+    [[nodiscard]] auto peek(void) -> Token;
 
     /**
-     * @brief Ignore the next token/s
+     * @brief Get the stream reading position
+     */
+    [[nodiscard]] auto tellg(void) -> std::streamoff;
+
+    /**
+     * @brief Set the stream reading position
      *
-     * @param n The number of tokens to ignore
+     * @param offset The offset from the beginning of the stream
      */
-    auto ignore(size_t n = 1) -> void;
+    auto seekg(std::streamoff offset) -> void;
 
     /**
-     * @brief Get the stream offset
+     * @brief Check wether the stream has reached EOF
      */
-    [[nodiscard]]
-    auto tellg(void) -> std::streamoff;
+    [[nodiscard]] auto eof(void) -> bool;
 
-    /**
-     * @brief Set the stream offset
-     *
-     * @param streamoff The offset to set the file stream to
-     */
-    auto seekg(std::streamoff streamoff) -> void;
+   private:
+    std::istream& _is;
+    OptionsSet _options {};
 
-    /**
-     * @brief Check if the stream has reached eof
-     */
-    [[nodiscard]]
-    auto eof(void) const -> bool;
-
-    /**
-     * @brief Get the tokens in a sequence
-     */
-    [[nodiscard]]
-    auto tokens(void) -> std::generator<token>;
-
-   private: // members
-    std::filesystem::path _sourceFilePath {};
-    std::unique_ptr<libparser::parser> _parser {nullptr};
-    token _bufferedToken {};
+    Token _bufferedToken {.type = TokenType::None};
 };
-} // namespace libtokenizer
+
+#endif

@@ -1,0 +1,28 @@
+name: CMake workflow
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install C++23 Compiler (GCC 14)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y g++-14 gcc-14
+        echo "CC=gcc-14" >> $GITHUB_ENV
+        echo "CXX=g++-14" >> $GITHUB_ENV
+
+    - name: Test
+      working-directory: ${{github.workspace}}
+      run: ./build.sh --autorun test
