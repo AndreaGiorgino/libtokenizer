@@ -51,11 +51,6 @@ target_compile_options(
     PRIVATE -Wextra -Wall -pedantic
 )
 
-target_include_directories(
-    CommonCxxTests
-    PRIVATE $<TARGET_FILE_DIR:${PROJECT_NAME}>/include
-)
-
 target_link_libraries(
     CommonCxxTests
     PRIVATE ${PROJECT_NAME}

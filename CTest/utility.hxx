@@ -38,12 +38,12 @@ static auto getTokenTypeName(Tokenizer::TokenType type) -> std::string {
 static auto expectToken(Tokenizer::Token token, std::string_view literal,
                         Tokenizer::TokenType type, int line) -> void {
     if (token.literal != literal)
-        throw std::runtime_error(
-            std::format("literal mismatch at line {}: got {:?} instead of {:?}",
-                        line, token.literal, literal));
+        throw std::runtime_error(std::format(
+            "literal mismatch at line {}: got '{}' instead of '{}'", line,
+            token.literal, literal));
     else if (token.type != type)
         throw std::runtime_error(std::format(
-            "type mismatch at line {}: got {:?} instead of {:?}", line,
+            "type mismatch at line {}: got '{}' instead of '{}'", line,
             getTokenTypeName(token.type), getTokenTypeName(type)));
 }
 

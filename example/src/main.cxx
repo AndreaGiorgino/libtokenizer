@@ -21,7 +21,7 @@ auto main(int, char**) -> int {
 
     do {
         token = tokenizer.get();
-        std::println("[offset = {:3}, type = {}]: {:?}", token.offset,
+        std::println("[offset = {:3}, type = {}]: '{}'", token.offset,
                      std::to_underlying(token.type), token.literal);
     } while (token.type != Tokenizer::TokenType::Eof);
 
