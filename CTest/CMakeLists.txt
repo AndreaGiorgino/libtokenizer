@@ -8,10 +8,12 @@ set(
     SOURCE_FILES
 
     Test_Ctor.cxx
+
     Test_Tokenize_Empty.cxx
     Test_Tokenize_Basic.cxx
-
     Test_Tokenize_IdentifierOptions.cxx
+
+    Test_StreamNavigation.cxx
 )
 
 create_test_sourcelist(
