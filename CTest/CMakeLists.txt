@@ -8,6 +8,7 @@ set(
     SOURCE_FILES
 
     Test_Ctor.cxx
+    Test_Tokenize_Empty.cxx
 )
 
 create_test_sourcelist(
