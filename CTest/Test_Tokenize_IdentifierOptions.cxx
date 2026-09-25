@@ -61,10 +61,18 @@ auto Test_Tokenize_IdentifierOptions(int, char**) -> int {
                     __LINE__);
         expectToken(tokenizer.get(), "", Tokenizer::TokenType::Eos, __LINE__);
     }
+
+    {
+        // CollapseSpaces
+        std::stringstream ss {"  \t\t\n\n"};
+        Tokenizer tokenizer {ss, Tokenizer::OptionsSet {}.set(
+                                     Tokenizer::Options::CollapseSpaces)};
+
+        expectToken(tokenizer.get(), "  ", Tokenizer::TokenType::Space,
                     __LINE__);
-        expectToken(tokenizer.get(), "_", Tokenizer::TokenType::Symbol,
+        expectToken(tokenizer.get(), "\t\t", Tokenizer::TokenType::Space,
                     __LINE__);
-        expectToken(tokenizer.get(), "1", Tokenizer::TokenType::NumericInt,
+        expectToken(tokenizer.get(), "\n\n", Tokenizer::TokenType::NewLine,
                     __LINE__);
         expectToken(tokenizer.get(), "", Tokenizer::TokenType::Eos, __LINE__);
     }
